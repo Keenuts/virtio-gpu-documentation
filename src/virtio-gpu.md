@@ -88,7 +88,7 @@ Each command is composed of a header, and a payload.
 |Length|Command|
 
 
-By example, to create a context (**id=5**)and then set it as current, I could issue the following command buffer:
+By example, to create a context (**with ctx id=5**)and then set it as current, I could issue the following command buffer:
 
 | 32 bits |
 |:------:|
@@ -147,15 +147,36 @@ enum {
 
 parameters = 6
 ```C
-[0] (uint32_t) R
-[1] (uint32_t) G
-[2] (uint32_t) B
-[3] (uint32_t) A
-[4] (double (64 bit)) Depth
-[5] (uint32_t) stencil
+[0] (uint32_t) Buffer index
+[1] (uint32_t) R
+[2] (uint32_t) G
+[3] (uint32_t) B
+[4] (uint32_t) A
+[5] (double (64 bits)) Depth
+[6] (uint32_t) stencil
 ```
-
 Note: On Windows, float are disabled in the kernel (DKM).
+
+### VIRGL_CCMD_FLUSH
+
+### VIRGL_CCMD_SET_VIEWPORT_STATE
+
+This command takes an array and a starting offset.
+If the offset 'n', with n > 0, first n values are skipped.
+
+Each viewport is defined using 6 32-bit floats. 3 for the scale, 3 for the translation
+Here is an example with 1 viewport, and offset 0.
+
+parameters = 7;
+```C
+[0] (uint32_t) offset = 0
+[1] (float (32 bits)) scale_A = 1.0f
+[2] (float (32 bits)) scale_B = 1.0f
+[3] (float (32 bits)) scale_C = 1.0f
+[4] (float (32 bits)) translation_A = 0.0f
+[5] (float (32 bits)) translation_B = 0.0f
+[6] (float (32 bits)) translation_C = 0.0f
+```
 
 ### VIRGL_CCMD_SET_SUB_CTX
 
