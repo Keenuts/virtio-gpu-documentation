@@ -157,7 +157,40 @@ parameters = 6
 ```
 Note: On Windows, float are disabled in the kernel (DKM).
 
-### VIRGL_CCMD_FLUSH
+### VIRGL_CCMD_DRAW_VBO
+
+parameters = 12
+```C
+[0] (uint32_t) indexed //is rendering indexed ?
+[1] (uint32_t) mode    //GLEnum GL_TRIANGLE/GL_LINE/etc...
+
+[2] (uint32_t) start
+[3] (uint32_t) count
+
+[4] (uint32_t) start_instance // Only if instance rendering is enabled
+[5] (uint32_t) instance_count
+
+[6] (uint32_t) index_bias //Only if indexed rendering is set
+[7] (uint32_t) min_index
+[8] (uint32_t) max_index
+
+[9] (uint32_t) primitive_restart
+[10] (uint32_t) restart_index
+
+[11] (uint32_t) cso // If != 0, will be used as count, and start will be 0.
+```
+
+### VIRGL_CCMD_CREATE_OBJECT
+
+This command needs specific arguments depending of the object you are creating
+
+parameters = 2
+```C
+struct {
+   uint8_t  type; // (ex: VIRGL_OBJECT_SHADER)
+   uint16_t handle;
+} __attribute__((__packed__))
+```
 
 ### VIRGL_CCMD_SET_VIEWPORT_STATE
 
