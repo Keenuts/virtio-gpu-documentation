@@ -173,7 +173,7 @@ cmd.len is the length of your commandbuffer in bytes.
 This command buffer can contain several 3D commands.
 Each command is composed of a header, and a payload.
 
-| uint16_t (MSB)| uint16_t (LSB)|
+| uint32_t (MSB)| uint32_t (LSB)|
 |------|-------|
 |Length|Command|
 
@@ -182,14 +182,18 @@ By example, to create a context (**with ctx id=5**)and then set it as current, I
 
 | 32 bits |
 |:------:|
-| VIRTIO_CCMD_CREATE_SUB_CTX \| (4 << 16) |
-|5|
-| VIRTIO_CCMD_SET_SUB_CTX \| (4 << 16) |
-|5|
+| 4 (Payload length = 4 bytes) |
+| VIRTIO_CCMD_CREATE_SUB_CTX (command) |
+| 5 (payload[0]) |
+| 4 (payload length = 4 bytes) |
+| VIRTIO_CCMD_SET_SUB_CTX (command)|
+|5 (payload[0] |
 
-    cell[0] = command + length of the payload (1 uint32_t -> 4 bytes)
+    cell[0] = command + length of the payload (1 uint32_t --> payload = 4)
     cell[1] = context ID
     ...
+
+\pagebreak
 
 These are the type allowed
 
