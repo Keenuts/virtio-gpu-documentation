@@ -68,6 +68,96 @@ No specific parameters
 
 \pagebreak
 
+## VIRTIO_GPU_CMD_RESOURCE_CREATE_2D
+
+3D and 2D resource creation are the same under the hood.
+The main difference are default values. Thus a lightweight command for 2D.
+
+```C
+struct {
+  uint32_t handle;
+  //target is set to 2
+  uint32_t format;
+  //bind is set to 2
+  uint32_t width;
+  uint32_t height;
+  //depth = 1
+  //array_size = 1
+  //last_level = 0
+  //nr_samples = 0
+  //flags = VIRTIO_GPU_RESOURCE_FLAG_Y_0_TOP
+};
+```
+
+\pagebreak
+
+## VIRTIO_GPU_CMD_RESOURCE_CREATE_3D
+
+This time, no default values, we need to setup all the fields
+
+```C
+struct {
+  uint32_t handle;
+  uint32_t target;
+  uint32_t format;
+  uint32_t bind;
+  uint32_t width;
+  uint32_t height;
+  uint32_t depth;
+  uint32_t array_size;
+  uint32_t last_level;
+  uint32_t nr_samples;
+  uint32_t flags;
+	uint32_t padding;
+};
+```
+
+\pagebreak
+
+## VIRTIO_GPU_CMD_CTX_ATTACH_RESOURCE
+
+Once a resource has been created, we need to attach it to a VGL context.
+Once attached, we will be able to use it.
+
+Remember: virgl context is already given in the command header.
+
+```C
+struct {
+  uint32_t handle;
+  uint32_t padding;
+};
+```
+
+\pagebreak
+
+## VIRTIO_GPU_CMD_RESOURCE_ATTACH_BACKING
+
+Once the resource created and attached, we may want modyfy/set it.
+There is two methods: INLINE_WRITE, or backing attachment.
+
+backing attachment is a way to share memory pages.
+Guest will send physical pages addresses, and host will link these pages to the resource.
+
+First, we find the header, describing how many entries we want to register, and a handle.
+Then, we will one field per entries, describing the size and start of the entry.
+
+```C
+//Command head
+struct {
+  uint32_t resource_id;
+  uint32_t nr_entries;
+};
+
+//One entry description
+struct {
+  uint64_t address;
+  uint32_t length;
+  uint32_t padding; //struct padding, non related to our entry
+};
+```
+
+\pagebreak
+
 ## VIRTIO_GPU_CMD_SUBMIT_3D:
 
 3D command decoder is called from QEMU with a buffer, a context ID, and a word count.
@@ -157,6 +247,8 @@ parameters = 6
 ```
 Note: On Windows, float are disabled in the kernel (DKM).
 
+\pagebreak
+
 ## VIRGL_CCMD_DRAW_VBO
 
 parameters = 12
@@ -180,11 +272,16 @@ parameters = 12
 [11] (uint32_t) cso // If != 0, will be used as count, and start will be 0.
 ```
 
+\pagebreak
+
 ## VIRGL_CCMD_CREATE_OBJECT
 
 Object creation parameters are higly dependent of the type of objects you create.
 However, the first parameter is always the handle.
-To specify the object type, you need to define the 'otp' field of the header to the desired type.
+
+To specify the object type, you need to define the '**opt**' field of the header to the desired type.
+
+\pagebreak
 
 ### Creating VIRGL_OBJECT_BLEND
 
@@ -231,6 +328,8 @@ struct {
   uint8_t colormask : 4;
 };
 ```
+
+\pagebreak
 
 ### Creating VIRGL_OBJECT_RASTERIZER
 
@@ -296,16 +395,23 @@ struct {
 };
 ```
 
+\pagebreak
+
 ### Creating VIRGL_OBJECT_SHADER
 
 To create a shader, parameters are the following:
 
+parameters = 5 + nb_tokens / 4
+```C
 [0] Handle (as always)
 [1] Shader type (0 = vertex, 1 = fragment)
 [2] number of tokens (aka how many letters in the ASCII representation)
 [3] offlen seam to be the offset to the 1st instruction (roughly)
 [4] num_so_output : stream output count
-[5] -> [END] Your shader, in TGSI-ASCII
+[5] -> [END] Your shader, in TGSI-ASCII stored in a UINT32[]
+```
+
+\pagebreak
 
 ## VIRGL_CCMD_SET_VIEWPORT_STATE
 
@@ -326,21 +432,34 @@ parameters = 7;
 [6] (float (32 bits)) translation_C = 0.0f
 ```
 
+\pagebreak
+
 ## VIRGL_CCMD_SET_SUB_CTX
+
+Create a sub context -> OpenGL context
+The created sub-context will be set as active.
 
 parameters = 1
 ```C
 [0] (uint32_t) context_id
 ```
+
+\pagebreak
 
 ## VIRGL_CCMD_CREATE_SUB_CTX
 
+Set a sub-context as active
+
 parameters = 1
 ```C
 [0] (uint32_t) context_id
 ```
 
+\pagebreak
+
 ## VIRGL_CCMD_DESTROY_SUB_CTX
+
+Destroy a sub-context
 
 parameters = 1
 ```C
