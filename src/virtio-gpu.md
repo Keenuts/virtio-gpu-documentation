@@ -143,7 +143,7 @@ enum {
 
 \pagebreak
 
-### VIRGL_CCMD_CLEAR
+## VIRGL_CCMD_CLEAR
 
 parameters = 6
 ```C
@@ -157,7 +157,7 @@ parameters = 6
 ```
 Note: On Windows, float are disabled in the kernel (DKM).
 
-### VIRGL_CCMD_DRAW_VBO
+## VIRGL_CCMD_DRAW_VBO
 
 parameters = 12
 ```C
@@ -180,19 +180,134 @@ parameters = 12
 [11] (uint32_t) cso // If != 0, will be used as count, and start will be 0.
 ```
 
-### VIRGL_CCMD_CREATE_OBJECT
+## VIRGL_CCMD_CREATE_OBJECT
 
-This command needs specific arguments depending of the object you are creating
+Object creation parameters are higly dependent of the type of objects you create.
+However, the first parameter is always the handle.
+To specify the object type, you need to define the 'otp' field of the header to the desired type.
 
-parameters = 2
+### Creating VIRGL_OBJECT_BLEND
+
 ```C
-struct {
-   uint8_t  type; // (ex: VIRGL_OBJECT_SHADER)
-   uint16_t handle;
-} __attribute__((__packed__))
+[0] (uint32_t)  Handle (as always)
+[1] bitfield_1
+[2] bitfield_2
+[3] bitfield_3
+...
+[10] bitfield_3
 ```
 
-### VIRGL_CCMD_SET_VIEWPORT_STATE
+#### bitfield 1
+```C
+// LSB on top
+struct {
+  uint8_t independant_blend_enable : 1;
+  uint8_t logicop_enable : 1;
+  uint8_t dither : 1;
+  uint8_t alpha_to_coverage : 1;
+  uint8_t alpha_to_one : 1;
+};
+```
+
+#### bitfield 2
+```C
+// LSB on top
+struct {
+  uint8_t logicop_func : 4;
+};
+```
+
+#### bitfield 3
+```C
+// LSB on top
+struct {
+  uint8_t blend_enable : 1;
+  uint8_t rgb_func : 3;
+  uint8_t rgb_src_factor : 5;
+  uint8_t rgb_dst_factor : 5;
+  uint8_t alpha_func : 3;
+  uint8_t alpha_src_factor : 5;
+  uint8_t alpha_dst_factor : 5;
+  uint8_t colormask : 4;
+};
+```
+
+### Creating VIRGL_OBJECT_RASTERIZER
+
+There is 9 parameters
+
+```C
+[0] (uint32_t)  Handle (as always)
+[1] (uint32_t)  bitfield 1
+[2] (float)     Point size 
+[3] (uint32_t)  Sprit coord enabled ?
+[4] (uint32_t)  bitfield 2
+[5] (float)     Line width
+[6] (float)     offset units
+[7] (float)     offset scale
+[8] (float)     offset clamp
+```
+
+#### Bitfield 1
+```C
+//LSB on top
+// All are 1 bit width except when specified otherwise
+struct {
+  uint8_t flatshade;
+  uint8_t depth_clip;
+  uint8_t clip_halfz;
+  uint8_t rasterizer_discard;
+  uint8_t flatshade_first;
+  uint8_t light_twoside;
+  uint8_t sprit_coord_mode;
+  uint8_t point_quad_rasterization;
+  uint8_t cull_face : 2;
+  uint8_t fill_front : 2;
+  uint8_t fill_back : 2;
+  uint8_t scissor;
+  uint8_t front_ccw;
+  uint8_t clamp_vertex_color;
+  uint8_t clamp_fragment_color;
+  uint8_t offset_line;
+  uint8_t offset_point;
+  uint8_t offset_tri;
+  uint8_t poly_smooth;
+  uint8_t poly_stipple_enable;
+  uint8_t point_smooth;
+  uint8_t point_size_per_vertex;
+  uint8_t multisample;
+  uint8_t line_smooth;
+  uint8_t line_stipple:enable;
+  uint8_t line_last_pixel;
+  uint8_t half_pixel_center;
+  uint8_t bottom_edge_rule;
+};
+```
+
+#### bitfield 2
+```C
+#define PIPE_MAX_CLIP_PLANES 8
+
+//LSB on top
+struct {
+  uint16_t line_stipple_pattern : 16
+  uint16_t line_stipple_factor : 8
+  uint16_t clip_plane_enable : PIPE_MAX_CLIP_PLANES
+};
+```
+
+### Creating VIRGL_OBJECT_SHADER
+
+To create a shader, parameters are the following:
+
+[0] Handle (as always)
+[1] Shader type (0 = vertex, 1 = fragment)
+[2] number of tokens (aka how many letters in the ASCII representation)
+[3] offlen seam to be the offset to the 1st instruction (roughly)
+[4] num_so_output : stream output count
+[5] -> [END] Your shader, in TGSI-ASCII
+
+## VIRGL_CCMD_SET_VIEWPORT_STATE
 
 This command takes an array and a starting offset.
 If the offset 'n', with n > 0, first n values are skipped.
@@ -211,21 +326,21 @@ parameters = 7;
 [6] (float (32 bits)) translation_C = 0.0f
 ```
 
-### VIRGL_CCMD_SET_SUB_CTX
+## VIRGL_CCMD_SET_SUB_CTX
 
 parameters = 1
 ```C
 [0] (uint32_t) context_id
 ```
 
-### VIRGL_CCMD_CREATE_SUB_CTX
+## VIRGL_CCMD_CREATE_SUB_CTX
 
 parameters = 1
 ```C
 [0] (uint32_t) context_id
 ```
 
-### VIRGL_CCMD_DESTROY_SUB_CTX
+## VIRGL_CCMD_DESTROY_SUB_CTX
 
 parameters = 1
 ```C
