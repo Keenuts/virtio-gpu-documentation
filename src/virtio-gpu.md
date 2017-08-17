@@ -473,6 +473,18 @@ struct {
 
 \pagebreak
 
+## VIRGL_CCMD_BIND_OBJECT,
+
+This command is used to bind a created 3D object to the current sub context.
+The **Opt** field of the header is used to define the type of the object.
+
+parameters = 1
+```C
+[0] (uint32_t) handle = 0
+```
+
+\pagebreak
+
 ## VIRGL_CCMD_SET_VIEWPORT_STATE
 
 This command takes an array and a starting offset.
