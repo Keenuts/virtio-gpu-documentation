@@ -525,3 +525,13 @@ parameters = 1
 ```C
 [0] (uint32_t) context_id
 ```
+
+## VIRGL_CCMD_BIND_SHADER
+
+Bind a shader to the pipeline (vtx, frag, etc)
+
+parameters = 2
+```C
+[0] (uint32_t) handle
+[1] (uint32_t) shader_type (0 = vertex, 1 = fragment)
+1``
