@@ -417,6 +417,62 @@ parameters = 5 + nb_tokens / 4
 
 \pagebreak
 
+### Creating VIRGL_OBJECT_SURFACE
+
+To create a surface, parameters are the following:
+
+parameters = 5
+```C
+[0] Handle (as always)
+[1] resource handle
+[2] format
+[3] val0 //dependent of the surface type
+[4] val1 //dependent of the surface type
+```
+
+\pagebreak
+
+### Creating VIRGL_OBJECT_DSA
+
+To create a DSA, parameters are the following (parameters = 5):
+```C
+[0] Handle (as always)
+[1] bitfield 1
+[2] bitfield 2
+[3] bitfield 2
+[4] alpha ref
+```
+
+#### bitfield 1
+```C
+//LSB on top
+struct {
+  uint16_t depth_enabled : 1
+  uint16_t depth_writemask : 1
+  uint16_t depth_func : 3
+  uint16_t unused : 3
+  uint16_t alpha_enabled : 1
+  uint16_t alpha_func : 3
+};
+```
+
+#### bitfield 2
+```C
+//LSB on top
+struct {
+  uint16_t stencil_enabled : 1
+  uint16_t stencil_func : 3
+  uint16_t stencil_fail_op : 3
+  uint16_t stencil_zpass_op : 3
+  uint16_t stencil_zfail_op : 3
+  uint16_t stencil_valuemask_op : 8
+  uint16_t stencil_writemask_op : 8
+};
+```
+
+
+\pagebreak
+
 ## VIRGL_CCMD_SET_VIEWPORT_STATE
 
 This command takes an array and a starting offset.
