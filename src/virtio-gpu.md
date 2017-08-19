@@ -506,6 +506,19 @@ parameters = 7;
 
 \pagebreak
 
+## VIRGL_CCMD_SET_POLYGON_STIPPLE
+
+This command takes an array of 32 uint32_t, and set the polygon stipple (As described on the OpenGL documentation)
+
+parameters = 32;
+```C
+[0]  (uint32_t) stipple_0 = 0
+...
+[31] (uint32_t) stipple_1 = 0
+```
+
+\pagebreak
+
 ## VIRGL_CCMD_SET_SUB_CTX
 
 Create a sub context -> OpenGL context
