@@ -417,6 +417,28 @@ parameters = 5 + nb_tokens / 4
 
 \pagebreak
 
+### Creating VIRGL_OBJECT_VERTEX_ELEMENTS
+
+To create a vertex elements object, parameters are the following:
+You can specify several sources.
+
+parameters = 1 + n * 4
+```C
+[0] Handle (as always)
+
+[1] src_offset
+[2] instance_divisor
+[3] vertex_buffer_index
+[4] src_format
+... 
+[n * 4 + 0] src_offset
+[n * 4 + 1] instance_divisor
+[n * 4 + 2] vertex_buffer_index
+[n * 4 + 3] src_format
+```
+
+\pagebreak
+
 ### Creating VIRGL_OBJECT_SURFACE
 
 To create a surface, parameters are the following:
