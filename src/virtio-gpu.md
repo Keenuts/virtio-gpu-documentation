@@ -485,6 +485,20 @@ parameters = 1
 
 \pagebreak
 
+## VIRGL_CCMD_SET_FRAMEBUFFER_STATE,
+
+2 + n parameters to setup framebuffer state.
+
+```C
+[0] (uint32_t) nbr_surfaces = 0
+[1] (uint32_t) zsurf_handle = 0
+[2] (uint32_t) surface_handle_1 = 0
+...
+[.] (uint32_t) surface_handle_n = 0
+```
+
+\pagebreak
+
 ## VIRGL_CCMD_SET_VIEWPORT_STATE
 
 This command takes an array and a starting offset.
