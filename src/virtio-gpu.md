@@ -506,6 +506,35 @@ parameters = 7;
 
 \pagebreak
 
+## VIRGL_CCMD_SET_SCISSOR_STATE
+
+This command takes an array and a starting offset.
+If the offset 'n', with n > 0, first n values are skipped.
+\
+Each scissor is defined using 4 16-bit uint packed by 2: \
+2 for the min X and Y, and 2 for max X and Y. \
+These values are stored using 2 uint32_t.
+
+First uint32_t: \
+  minX = 2 lsb bytes \
+  minY = 2 msb bytes \
+
+
+Second uint32_t: \
+  maxX = 2 lsb bytes \
+  maxY = 2 msb bytes \
+
+Here is an example with 1 scissor, and offset 0.
+
+parameters = 3;
+```C
+[0] (uint32_t) offset = 0
+[1] (uint32_t) minXY = (0xffff) | (0xffff << 16)
+[2] (uint32_t) maxXY = (0x0f0f) | (0xf00f << 16)
+```
+
+\pagebreak
+
 ## VIRGL_CCMD_SET_POLYGON_STIPPLE
 
 This command takes an array of 32 uint32_t, and set the polygon stipple (As described on the OpenGL documentation)
