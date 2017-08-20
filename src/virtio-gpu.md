@@ -257,21 +257,22 @@ Note: On Windows, float are disabled in the kernel (DKM).
 
 parameters = 12
 ```C
-[0] (uint32_t) indexed //is rendering indexed ?
-[1] (uint32_t) mode    //GLEnum GL_TRIANGLE/GL_LINE/etc...
 
-[2] (uint32_t) start
-[3] (uint32_t) count
+[0] (uint32_t) start
+[1] (uint32_t) count
 
-[4] (uint32_t) start_instance // Only if instance rendering is enabled
-[5] (uint32_t) instance_count
+[2] (uint32_t) mode    //GLEnum GL_TRIANGLE/GL_LINE/etc...
+[3] (uint32_t) indexed //is rendering indexed ?
 
-[6] (uint32_t) index_bias //Only if indexed rendering is set
-[7] (uint32_t) min_index
-[8] (uint32_t) max_index
+[4] (uint32_t) instance_count
+[5] (uint32_t) index_bias //Only if indexed rendering is set
 
-[9] (uint32_t) primitive_restart
-[10] (uint32_t) restart_index
+[6] (uint32_t) start_instance // Only if instance rendering is enabled
+[7] (uint32_t) primitive_restart
+[9] (uint32_t) restart_index
+
+[9] (uint32_t) min_index
+[10] (uint32_t) max_index
 
 [11] (uint32_t) cso // If != 0, will be used as count, and start will be 0.
 ```
