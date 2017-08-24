@@ -241,7 +241,7 @@ enum {
 
 parameters = 6
 ```C
-[0] (uint32_t) Buffer index
+[0] (uint32_t) clear_type
 [1] (uint32_t) R
 [2] (uint32_t) G
 [3] (uint32_t) B
@@ -250,6 +250,22 @@ parameters = 6
 [6] (uint32_t) stencil
 ```
 Note: On Windows, float are disabled in the kernel (DKM).
+
+```C
+//LSB FIRST
+struct clear_type {
+  uint8_t depth   : 1;
+  uint8_t stencil : 1;
+  uint8_t color0  : 1;
+  uint8_t color1  : 1;
+  uint8_t color2  : 1;
+  uint8_t color3  : 1;
+  uint8_t color4  : 1;
+  uint8_t color5  : 1;
+  uint8_t color6  : 1;
+  uint8_t color7  : 1;
+};
+```
 
 \pagebreak
 
